@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #f5efe6;
+  --color-card: #ebe0d2;
+  --color-tan: #8b5e3c;
+}
+
+:focus-visible {
+  outline: 2px solid #8b5e3c;
+  outline-offset: 3px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
