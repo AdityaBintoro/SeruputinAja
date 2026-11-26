@@ -5,7 +5,8 @@ import Footer from './components/footer'
 import Header from './components/header'
 import Main from './components/main'
 import CheckoutPage from './pages/checkout/CheckoutPage'
-import OrderStatusPage from './pages/order-status/OrderStatusPage'
+import StaffLoginPage from './pages/login/StaffLoginPage'
+
 
 const CART_STORAGE_KEY = 'seruputinaja_cart_items'
 
@@ -102,7 +103,7 @@ function App() {
               />
             }
           />
-          <Route path="/order-status" element={<OrderStatusPage />} />
+          <Route path="/login" element={<StaffLoginPage/>} />
         </Routes>
 
         <Footer />
