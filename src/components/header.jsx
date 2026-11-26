@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { formatRupiah } from '../utils/formatCurrency'
 
 function Header({ cartItems, cartCount, cartTotal, onRemoveItem, onIncreaseItem,
@@ -7,6 +7,16 @@ function Header({ cartItems, cartCount, cartTotal, onRemoveItem, onIncreaseItem,
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const focusMenuSearch = () => {
+    if (pathname !== '/') {
+      navigate('/#menu')
+      return
+    }
+
+    document.getElementById('menu-search')?.focus()
+  }
 
   return (
     <header className="sticky top-0 z-20 border-y border-[#39291f]/15 bg-[#e9dfd1]">
@@ -23,7 +33,12 @@ function Header({ cartItems, cartCount, cartTotal, onRemoveItem, onIncreaseItem,
         </nav>
 
         <div className="flex items-center gap-5">
-          <button type="button" aria-label="Cari" className="transition-colors hover:text-tan">
+          <button
+            type="button"
+            aria-label="Cari menu"
+            onClick={focusMenuSearch}
+            className="transition-colors hover:text-tan"
+          >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" strokeLinecap="round" />

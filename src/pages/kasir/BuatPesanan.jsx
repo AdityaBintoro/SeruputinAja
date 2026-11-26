@@ -11,6 +11,7 @@ function BuatPesanan() {
   const [notes, setNotes] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('Tunai di Kasir')
   const [isPaid, setIsPaid] = useState(true)
+  const [cashReceived, setCashReceived] = useState('')
   const [quantities, setQuantities] = useState({})
   const [menuSearch, setMenuSearch] = useState('')
   const [error, setError] = useState('')
@@ -26,6 +27,8 @@ function BuatPesanan() {
     (sum, item) => sum + item.price * item.quantity,
     0,
   )
+  const cashAmount = Number(cashReceived)
+  const hasCashAmount = cashReceived !== '' && Number.isFinite(cashAmount)
 
   const changeQuantity = (itemId, amount) => {
     setQuantities((current) => {
@@ -49,6 +52,15 @@ function BuatPesanan() {
       return
     }
 
+    if (
+      paymentMethod === 'Tunai di Kasir' &&
+      isPaid &&
+      (!hasCashAmount || cashAmount < total)
+    ) {
+      setError('Nominal uang yang diterima belum mencukupi total pesanan.')
+      return
+    }
+
     const now = new Date()
     const order = {
       id: `ORD-${now.getTime().toString().slice(-6)}`,
@@ -64,6 +76,11 @@ function BuatPesanan() {
         quantity,
       })),
       total,
+      ...(paymentMethod === 'Tunai di Kasir' &&
+        isPaid && {
+          cashTendered: cashAmount,
+          changeDue: cashAmount - total,
+        }),
       createdAt: now.toLocaleTimeString('id-ID', {
         hour: '2-digit',
         minute: '2-digit',
@@ -260,6 +277,49 @@ function BuatPesanan() {
                   <p className="mt-1 text-[11px] text-[#665547]">
                     Pastikan dana sudah masuk sebelum centang lunas.
                   </p>
+                </div>
+              )}
+
+              {paymentMethod === 'Tunai di Kasir' && (
+                <div className="rounded-xl border border-[#39291f]/15 bg-[#f5efe6] p-4">
+                  <label htmlFor="cash-received" className="block text-sm font-medium">
+                    Uang pelanggan
+                    <input
+                      id="cash-received"
+                      type="number"
+                      min="0"
+                      step="500"
+                      inputMode="numeric"
+                      value={cashReceived}
+                      onChange={(event) => {
+                        setCashReceived(event.target.value)
+                        setError('')
+                      }}
+                      placeholder="Masukkan nominal uang"
+                      className="mt-2 w-full rounded-lg border border-[#39291f]/15 bg-white px-3 py-2.5 font-normal outline-none focus:border-tan"
+                    />
+                  </label>
+                  <div
+                    aria-live="polite"
+                    className="mt-3 flex justify-between gap-3 text-sm"
+                  >
+                    <span className="text-[#665547]">
+                      {!hasCashAmount
+                        ? 'Total tagihan'
+                        : cashAmount < total
+                          ? 'Kekurangan'
+                          : 'Kembalian'}
+                    </span>
+                    <span
+                      className={`font-semibold ${hasCashAmount && cashAmount < total ? 'text-red-700' : 'text-[#39291f]'}`}
+                    >
+                      {formatRupiah(
+                        hasCashAmount
+                          ? Math.abs(cashAmount - total)
+                          : total,
+                      )}
+                    </span>
+                  </div>
                 </div>
               )}
 

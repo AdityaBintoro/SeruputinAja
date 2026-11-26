@@ -1,8 +1,24 @@
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import heroImg from '../assets/img/hero.jpg';
 import { MENU_ITEMS } from '../data/menuData';
 import { formatRupiah } from '../utils/formatCurrency';
 
 function Main({ onAddItem }) {
+  const [search, setSearch] = useState('');
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash === '#menu') {
+      document.getElementById('menu-search')?.focus();
+    }
+  }, [hash]);
+
+  const query = search.trim().toLocaleLowerCase('id-ID');
+  const filteredMenuItems = MENU_ITEMS.filter((item) =>
+    `${item.name} ${item.description}`.toLocaleLowerCase('id-ID').includes(query),
+  );
+
   const handleAdd = (item) => {
     onAddItem(item);
   };
@@ -55,47 +71,68 @@ function Main({ onAddItem }) {
 
       <section id="menu" className="bg-[#e9dfd1] border-y border-[#39291f]/15">
         <div className="max-w-6xl mx-auto px-6 py-24">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#39291f]">
-            Menu <span className="text-[#B98F5E]">Kami</span>
-          </h2>
-          <p className="mt-3 text-[#665547] font-light">
-            Semua minuman bisa dipesan panas atau dingin.
-          </p>
-
-          <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-            {MENU_ITEMS.map((item) => (
-              <article
-                key={item.id}
-                className="bg-[#f6efe4] border border-[#39291f]/10 rounded-lg overflow-hidden flex flex-row sm:flex-col shadow-sm"
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[4/3] shrink-0 object-cover bg-[#d9c9b2]"
-                />
-                <div className="p-3 sm:p-5 flex flex-col flex-1 min-w-0">
-                  <h3 className="text-base sm:text-lg font-semibold text-[#39291f]">
-                    {item.name}
-                  </h3>
-                  <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-[#665547] font-light flex-1 line-clamp-2">
-                    {item.description}
-                  </p>
-                  <div className="mt-2 sm:mt-5 flex items-center justify-between gap-2">
-                    <span className="text-sm sm:text-base text-[#B98F5E] font-semibold">
-                      {formatRupiah(item.price)}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleAdd(item)}
-                      className="bg-[#B98F5E] text-white text-xs sm:text-sm font-medium px-3.5 py-2 sm:px-4 rounded-md hover:brightness-110 transition"
-                    >
-                      Tambah
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#39291f]">
+                Menu <span className="text-[#B98F5E]">Kami</span>
+              </h2>
+              <p className="mt-3 text-[#665547] font-light">
+                Semua minuman bisa dipesan panas atau dingin.
+              </p>
+            </div>
+            <label className="w-full sm:max-w-xs">
+              <span className="sr-only">Cari menu</span>
+              <input
+                id="menu-search"
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Cari nama atau deskripsi menu"
+                className="w-full rounded-lg border border-[#39291f]/15 bg-[#f6efe4] px-4 py-3 text-sm text-[#39291f] outline-none focus:border-tan"
+              />
+            </label>
           </div>
+
+          {filteredMenuItems.length === 0 ? (
+            <p className="mt-8 rounded-lg bg-[#f6efe4] px-4 py-8 text-center text-sm text-[#665547]">
+              Menu tidak ditemukan. Coba kata kunci lain.
+            </p>
+          ) : (
+            <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              {filteredMenuItems.map((item) => (
+                <article
+                  key={item.id}
+                  className="bg-[#f6efe4] border border-[#39291f]/10 rounded-lg overflow-hidden flex flex-row sm:flex-col shadow-sm"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-28 h-28 sm:w-full sm:h-auto sm:aspect-[4/3] shrink-0 object-cover bg-[#d9c9b2]"
+                  />
+                  <div className="p-3 sm:p-5 flex flex-col flex-1 min-w-0">
+                    <h3 className="text-base sm:text-lg font-semibold text-[#39291f]">
+                      {item.name}
+                    </h3>
+                    <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-[#665547] font-light flex-1 line-clamp-2">
+                      {item.description}
+                    </p>
+                    <div className="mt-2 sm:mt-5 flex items-center justify-between gap-2">
+                      <span className="text-sm sm:text-base text-[#B98F5E] font-semibold">
+                        {formatRupiah(item.price)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleAdd(item)}
+                        className="bg-[#B98F5E] text-white text-xs sm:text-sm font-medium px-3.5 py-2 sm:px-4 rounded-md hover:brightness-110 transition"
+                      >
+                        Tambah
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
