@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import { formatRupiah } from '../utils/formatCurrency'
 
 function Header({ cartItems, cartCount, cartTotal, onRemoveItem, onIncreaseItem,
   onDecreaseItem }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <header className="sticky top-0 z-20 border-y border-[#39291f]/15 bg-[#e9dfd1]">
@@ -129,6 +131,18 @@ function Header({ cartItems, cartCount, cartTotal, onRemoveItem, onIncreaseItem,
                       <span>Total</span>
                       <span className="text-[#B98F5E]">{formatRupiah(cartTotal)}</span>
                     </div>
+
+                    {/* Tombol Checkout */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCartOpen(false)
+                        navigate('/checkout')
+                      }}
+                      className="mt-4 w-full rounded-md bg-tan px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:brightness-110"
+                    >
+                      Checkout
+                    </button>
                   </>
                 )}
               </section>

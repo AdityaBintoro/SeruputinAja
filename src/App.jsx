@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router'
 import './App.css'
 import Footer from './components/footer'
 import Header from './components/header'
 import Main from './components/main'
+import CheckoutPage from './pages/checkout/CheckoutPage'
+import OrderStatusPage from './pages/order-status/OrderStatusPage'
+
 const CART_STORAGE_KEY = 'seruputinaja_cart_items'
 
 function App() {
-  // use effect
+
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY)
@@ -15,7 +19,7 @@ function App() {
       return []
     }
   })
-  
+
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems))
@@ -24,11 +28,9 @@ function App() {
     }
   }, [cartItems])
 
-  // use state to do list
   const handleAddItem = (item) => {
     setCartItems((currentItems) => {
       const cek_keranjang = currentItems.find((cartItem) => cartItem.id === item.id)
-
       if (cek_keranjang) {
         return currentItems.map((cartItem) =>
           cartItem.id === item.id
@@ -46,7 +48,6 @@ function App() {
     )
   }
 
-  // use state counter
   const handleIncreaseItem = (itemId) => {
     setCartItems((currentItems) =>
       currentItems.map((cartItem) =>
@@ -69,27 +70,44 @@ function App() {
     )
   }
 
-
+  const handleClearCart = () => {
+    setCartItems([])
+  }
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0)
   const cartTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,0,)
+    (total, item) => total + item.price * item.quantity, 0,)
 
   return (
-    <div className="bg-ink text-[#39291f] font-sans antialiased">
-      <Header
-        cartItems={cartItems}
-        cartCount={cartCount}
-        cartTotal={cartTotal}
-        onRemoveItem={handleRemoveItem}
-        onIncreaseItem={handleIncreaseItem}
-        onDecreaseItem={handleDecreaseItem}
-      />
+    <BrowserRouter>
+      <div className="min-h-screen bg-ink text-[#39291f] font-sans antialiased">
+        <Header
+          cartItems={cartItems}
+          cartCount={cartCount}
+          cartTotal={cartTotal}
+          onRemoveItem={handleRemoveItem}
+          onIncreaseItem={handleIncreaseItem}
+          onDecreaseItem={handleDecreaseItem}
+        />
 
-      <Main onAddItem={handleAddItem} />
+        <Routes>
+          <Route path="/" element={<Main onAddItem={handleAddItem} />} />
+          <Route
+            path="/checkout"
+            element={
+              <CheckoutPage
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+                onClearCart={handleClearCart}
+              />
+            }
+          />
+          <Route path="/order-status" element={<OrderStatusPage />} />
+        </Routes>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
