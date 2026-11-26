@@ -36,7 +36,7 @@ function LoginPage({ onLoginSuccess }) {
     }
 
     return (
-        <main className="flex min-h-[calc(100vh-10rem)] items-center justify-center bg-[#f5efe6] px-6 py-12 text-[#39291f]">
+        <main className="flex min-h-screen items-center justify-center bg-[#f5efe6] px-6 py-12 text-[#39291f]">
             <section className="w-full max-w-md rounded-2xl border border-[#39291f]/12 bg-[#f6efe4] p-7 shadow-sm md:p-8">
                 <div className="mb-6">
                     <button

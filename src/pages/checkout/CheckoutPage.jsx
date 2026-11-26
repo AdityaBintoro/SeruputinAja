@@ -15,9 +15,11 @@ function CheckoutPage({ cartItems, cartTotal, onClearCart }) {
 
   const [pendingOrder, setPendingOrder] = useState(null)
   const [completedOrder, setCompletedOrder] = useState(null)
+  const [storageError, setStorageError] = useState('')
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    setStorageError('')
 
     const baseOrder = {
       id: `ORD-${Date.now().toString().slice(-4)}`,
@@ -48,7 +50,12 @@ function CheckoutPage({ cartItems, cartTotal, onClearCart }) {
       paymentStatus: 'Belum Bayar (Kasir)',
       status: 'Menunggu',
     }
-    saveOrderToStorage(cashOrder)
+    try {
+      saveOrderToStorage(cashOrder)
+    } catch {
+      setStorageError('Pesanan gagal disimpan. Periksa penyimpanan browser lalu coba lagi.')
+      return
+    }
     onClearCart()
     setCompletedOrder(cashOrder)
   }
@@ -61,7 +68,12 @@ function CheckoutPage({ cartItems, cartTotal, onClearCart }) {
       paymentStatus: 'Lunas',
       status: 'Menunggu',
     }
-    saveOrderToStorage(paidOrder)
+    try {
+      saveOrderToStorage(paidOrder)
+    } catch {
+      setStorageError('Pesanan gagal disimpan. Periksa penyimpanan browser lalu coba lagi.')
+      return
+    }
     onClearCart()
     setPendingOrder(null)
     setCompletedOrder(paidOrder)
@@ -73,6 +85,7 @@ function CheckoutPage({ cartItems, cartTotal, onClearCart }) {
         order={pendingOrder}
         onConfirmPaid={handlePaymentSuccess}
         onCancel={() => setPendingOrder(null)}
+        errorMessage={storageError}
       />
     )
   }
@@ -116,6 +129,11 @@ function CheckoutPage({ cartItems, cartTotal, onClearCart }) {
           <p className="text-sm font-medium text-tan">Selesaikan Pesanan</p>
           <h1 className="mt-1 text-3xl font-bold md:text-4xl">Checkout</h1>
         </div>
+        {storageError && (
+          <p role="alert" className="mb-5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
+            {storageError}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <CheckoutForm

@@ -1,6 +1,6 @@
 import { formatRupiah } from '../../utils/formatCurrency'
 
-function PaymentGatewayModal({ order, onConfirmPaid, onCancel }) {
+function PaymentGatewayModal({ order, onConfirmPaid, onCancel, errorMessage }) {
   return (
     <main className="mx-auto flex min-h-[calc(100vh-10rem)] max-w-xl items-center px-6 py-14">
       <section className="w-full rounded-xl border border-[#39291f]/15 bg-[#f6efe4] p-6 shadow-sm md:p-8">
@@ -47,6 +47,11 @@ function PaymentGatewayModal({ order, onConfirmPaid, onCancel }) {
         </div>
 
         <div className="mt-6 space-y-3">
+          {errorMessage && (
+            <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">
+              {errorMessage}
+            </p>
+          )}
           <button
             type="button"
             onClick={onConfirmPaid}
